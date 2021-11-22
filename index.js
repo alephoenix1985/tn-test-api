@@ -3,8 +3,10 @@ import * as taskHandler from "./handler/task.handler.js";
 
 // const mongoose = require('mongoose');
 import http from "http";
+import {importReset} from "./handler/task.handler.js";
 
 const STR_CON = process.env.MONGO_STR_CONNECTION || 'mongodb://localhost/test';
+
 export function startServer(routes, PORT = 4000) {
     const app = express();
     app.use(express.json());
@@ -63,5 +65,11 @@ startServer((app) => {
     app.get('/tasks', async (req, res, next) => {
         let r = await taskHandler.get();
         res.send(r);
+    });
+
+    app.get('/import/:count', async (req, res, next) => {
+        const {count} = req.params || {};
+        await taskHandler.importReset(count);
+        res.send(true);
     });
 })
